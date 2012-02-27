@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string-array name="http_methods">
+        <item>GET</item>
+        <item>POST</item>
+        <item>PUT</item>
+        <item>DELETE</item>
+        <item>HEAD</item>
+        <item>TRACE</item>
+        <item>OPTIONS</item>
+    </string-array>
+    
+    <string-array name="http_authentication">
+        <item>@string/label_auth_disabled</item>
+        <item>@string/label_auth_basic</item>
+    </string-array>
+    
+    <string name="label_auth_disabled">NONE</string>
+    <string name="label_auth_basic">BASIC</string>
+    
+</resources>
