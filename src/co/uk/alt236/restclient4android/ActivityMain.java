@@ -33,11 +33,7 @@ import co.uk.alt236.restclient4android.fragments.FragmentTarget;
 import co.uk.alt236.restclient4android.fragments.LoaderThrottleSupport;
 // http://openclipart.org/detail/3391/glossy-globe-by-freedo
 // http://openclipart.org/detail/67/tools-hammer-spanner-by-andy
-/**
- * Demonstrates combining a TabHost with a ViewPager to implement a tab UI
- * that switches between tabs and also allows the user to perform horizontal
- * flicks to move between the tabs.
- */
+
 public class ActivityMain extends FragmentActivity {
 	
 	private static final String TAB_TARGET = "tab_target";
@@ -78,7 +74,7 @@ public class ActivityMain extends FragmentActivity {
     private void addTab(TabHost tabHost, TabsAdapter tabAdapter, String tabSpec, String title, Class<?> clss, Bundle args){
     	tabAdapter.addTab(tabHost.newTabSpec(tabSpec).setIndicator(title), clss, args);
     }
-    
+        
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
