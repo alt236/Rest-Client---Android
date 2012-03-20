@@ -19,6 +19,7 @@ package co.uk.alt236.restclient4android.fragments;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.Menu;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuInflater;
 import android.view.View;
@@ -26,25 +27,31 @@ import android.view.ViewGroup;
 import android.widget.Spinner;
 import co.uk.alt236.restclient4android.R;
 
-public class FragmentBody extends Fragment {
+public class FragmentBody extends Fragment implements RestRequestFragmentInterface{
+	private final String TAG = this.getClass().getName();
+	
 	Spinner methodSpinner;
 	Spinner authSpinner;
+
+	@Override
+	public int getType() {
+		return FRAGMENT_TYPE_BODY;
+	}
 
 	@Override
 	public void onActivityCreated(Bundle savedInstanceState) {
 		super.onActivityCreated(savedInstanceState);
 		setHasOptionsMenu(true);
-
-	}
-
-	//@Override 
-	public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-		// Place an action bar item for searching.
 	}
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+	}
+
+	//@Override 
+	public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+		// Place an action bar item for searching.
 	}
 
 	@Override
@@ -57,5 +64,11 @@ public class FragmentBody extends Fragment {
 
 	private void populateUI(final LayoutInflater inflater, final View parent){
 
+	}
+
+	@Override
+	public void updateRequest() {
+		Log.d(TAG, "^ updateRequest()");
+		// TODO Auto-generated method stub
 	}
 }

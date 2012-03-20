@@ -20,33 +20,34 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.Menu;
 import android.support.v4.view.MenuItem;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemSelectedListener;
+import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TextView;
 import co.uk.alt236.restclient4android.R;
+import co.uk.alt236.restclient4android.RestClient4AndroidApplication;
 
-public class FragmentTarget extends Fragment {
+public class FragmentTarget extends Fragment implements RestRequestFragmentInterface {
+	private final String TAG = this.getClass().getName();
 	Spinner methodSpinner;
 	Spinner authSpinner;
+	EditText url;
+	
+	@Override
+	public int getType() {
+		return FRAGMENT_TYPE_TARGET;
+	}
 
 	@Override
 	public void onActivityCreated(Bundle savedInstanceState) {
 		super.onActivityCreated(savedInstanceState);
 		setHasOptionsMenu(true);
-
-	}
-
-	//@Override 
-	public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-		// Place an action bar item for searching.
-		MenuItem item = menu.add("Go");
-		item.setIcon(android.R.drawable.ic_menu_send);
-		item.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
 	}
 
 	@Override
@@ -65,7 +66,8 @@ public class FragmentTarget extends Fragment {
 	private void populateUI(final LayoutInflater inflater, final View parent){
 		methodSpinner = (Spinner) parent.findViewById(R.id.spinnerHttpMethod);
 		authSpinner = (Spinner) parent.findViewById(R.id.spinnerAuth);
-
+		url = (EditText) parent.findViewById(R.id.editUrl);
+		
 		authSpinner.setOnItemSelectedListener(new OnItemSelectedListener() {
 			@Override
 			public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
@@ -90,5 +92,12 @@ public class FragmentTarget extends Fragment {
 			}
 
 		});
+	}
+
+	@Override
+	public void updateRequest() {
+		Log.d(TAG, "^ updateRequest()");
+		RestClient4AndroidApplication.getRequest().setUrl(url.getText().toString());
+		// TODO Auto-generated method stub
 	}
 }

@@ -16,6 +16,7 @@
 
 package co.uk.alt236.restclient4android.fragments;
 
+import co.uk.alt236.restclient4android.R;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
@@ -32,15 +33,41 @@ import android.util.Log;
 import android.view.MenuInflater;
 import android.view.View;
 import android.widget.ListView;
+import android.widget.Toast;
 
-public class FragmentHeaders extends ListFragment implements LoaderManager.LoaderCallbacks<Cursor> {
-
+public class FragmentHeaders extends ListFragment implements LoaderManager.LoaderCallbacks<Cursor>, RestRequestFragmentInterface {
+	private final String TAG = this.getClass().getName();
 	// This is the Adapter being used to display the list's data.
 	SimpleCursorAdapter mAdapter;
 
 	// If non-null, this is the current filter the user has provided.
 	String mCurFilter;
 
+	// These are the Contacts rows that we will retrieve.
+	static final String[] CONTACTS_SUMMARY_PROJECTION = new String[] {
+		Contacts._ID, Contacts.DISPLAY_NAME, 
+		Contacts.CONTACT_STATUS,
+		Contacts.CONTACT_PRESENCE, 
+		Contacts.PHOTO_ID,
+		Contacts.LOOKUP_KEY, };
+
+	@Override
+	public int getType() {
+		return FRAGMENT_TYPE_HEADERS;
+	}
+
+	@Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+		switch (item.getItemId()) {
+		
+		case R.id.menu_add_header:			
+	        Toast.makeText(getActivity(), "Handling " + item.getTitle(), Toast.LENGTH_SHORT).show();
+			return true;
+		}
+
+        return false;
+    }
+	
 	@Override
 	public void onActivityCreated(Bundle savedInstanceState) {
 		super.onActivityCreated(savedInstanceState);
@@ -53,10 +80,14 @@ public class FragmentHeaders extends ListFragment implements LoaderManager.Loade
 		setHasOptionsMenu(true);
 
 		// Create an empty adapter we will use to display the loaded data.
-		mAdapter = new SimpleCursorAdapter(getActivity(),
-				android.R.layout.simple_list_item_2, null, new String[] {
-			Contacts.DISPLAY_NAME, Contacts.CONTACT_STATUS },
-			new int[] { android.R.id.text1, android.R.id.text2 }, 0);
+		mAdapter = new SimpleCursorAdapter(
+				getActivity(),
+				android.R.layout.simple_list_item_2, 
+				null, 
+				new String[] {Contacts.DISPLAY_NAME, Contacts.CONTACT_STATUS },
+				new int[] { android.R.id.text1, android.R.id.text2 }, 
+				0);
+
 		setListAdapter(mAdapter);
 
 		// Start out with a progress indicator.
@@ -66,38 +97,6 @@ public class FragmentHeaders extends ListFragment implements LoaderManager.Loade
 		// or start a new one.
 		getLoaderManager().initLoader(0, null, this);
 	}
-
-	//@Override
-	public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-		// Place an action bar item for searching.
-		 MenuItem item = menu.add("Add");
-		 item.setIcon(android.R.drawable.ic_menu_add);
-		 item.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
-		// SearchView sv = new SearchView(getActivity());
-		// sv.setOnQueryTextListener(this);
-		// item.setActionView(sv);
-	}
-
-	public boolean onQueryTextChange(String newText) {
-		// Called when the action bar search text has changed. Update
-		// the search filter, and restart the loader to do a new query
-		// with this filter.
-		mCurFilter = !TextUtils.isEmpty(newText) ? newText : null;
-		getLoaderManager().restartLoader(0, null, this);
-		return true;
-	}
-
-	@Override
-	public void onListItemClick(ListView l, View v, int position, long id) {
-		// Insert desired behavior here.
-		Log.i("FragmentComplexList", "Item clicked: " + id);
-	}
-
-	// These are the Contacts rows that we will retrieve.
-	static final String[] CONTACTS_SUMMARY_PROJECTION = new String[] {
-		Contacts._ID, Contacts.DISPLAY_NAME, Contacts.CONTACT_STATUS,
-		Contacts.CONTACT_PRESENCE, Contacts.PHOTO_ID,
-		Contacts.LOOKUP_KEY, };
 
 	public Loader<Cursor> onCreateLoader(int id, Bundle args) {
 		// This is called when a new Loader needs to be created. This
@@ -117,9 +116,34 @@ public class FragmentHeaders extends ListFragment implements LoaderManager.Loade
 		String select = "((" + Contacts.DISPLAY_NAME + " NOTNULL) AND ("
 				+ Contacts.HAS_PHONE_NUMBER + "=1) AND ("
 				+ Contacts.DISPLAY_NAME + " != '' ))";
-		return new CursorLoader(getActivity(), baseUri,
-				CONTACTS_SUMMARY_PROJECTION, select, null,
+		return new CursorLoader(
+				getActivity(), 
+				baseUri,
+				CONTACTS_SUMMARY_PROJECTION, 
+				select, 
+				null,
 				Contacts.DISPLAY_NAME + " COLLATE LOCALIZED ASC");
+	}
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+    	inflater.inflate(R.menu.menu_fragment_headers, menu);
+        super.onCreateOptionsMenu(menu, inflater);
+
+    }
+
+    
+	@Override
+	public void onListItemClick(ListView l, View v, int position, long id) {
+		// Insert desired behaviour here.
+		Log.i("FragmentComplexList", "Item clicked: " + id);
+	}
+
+	public void onLoaderReset(Loader<Cursor> loader) {
+		// This is called when the last Cursor provided to onLoadFinished()
+		// above is about to be closed. We need to make sure we are no
+		// longer using it.
+		mAdapter.swapCursor(null);
 	}
 
 	public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
@@ -136,10 +160,18 @@ public class FragmentHeaders extends ListFragment implements LoaderManager.Loade
 		}
 	}
 
-	public void onLoaderReset(Loader<Cursor> loader) {
-		// This is called when the last Cursor provided to onLoadFinished()
-		// above is about to be closed. We need to make sure we are no
-		// longer using it.
-		mAdapter.swapCursor(null);
+	public boolean onQueryTextChange(String newText) {
+		// Called when the action bar search text has changed. Update
+		// the search filter, and restart the loader to do a new query
+		// with this filter.
+		mCurFilter = !TextUtils.isEmpty(newText) ? newText : null;
+		getLoaderManager().restartLoader(0, null, this);
+		return true;
+	}
+
+	@Override
+	public void updateRequest() {
+		Log.d(TAG, "^ updateRequest()");
+		// TODO Auto-generated method stub
 	}
 }
