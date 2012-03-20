@@ -14,4 +14,7 @@
 	<string name="tab_label_body">Body</string>
 	<string name="tab_label_misc">Misc</string>
 	<string name="field_label_body">Body contents:</string>
+	<string name="body_text_hint">Type the body text</string>
+	<string name="menu_execute_rest_call_label">GO</string>
+	<string name="menu_add_header_label">Add</string>
 </resources>

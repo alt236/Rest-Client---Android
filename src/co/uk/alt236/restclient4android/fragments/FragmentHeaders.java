@@ -16,7 +16,6 @@
 
 package co.uk.alt236.restclient4android.fragments;
 
-import co.uk.alt236.restclient4android.R;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
@@ -34,6 +33,7 @@ import android.view.MenuInflater;
 import android.view.View;
 import android.widget.ListView;
 import android.widget.Toast;
+import co.uk.alt236.restclient4android.R;
 
 public class FragmentHeaders extends ListFragment implements LoaderManager.LoaderCallbacks<Cursor>, RestRequestFragmentInterface {
 	private final String TAG = this.getClass().getName();

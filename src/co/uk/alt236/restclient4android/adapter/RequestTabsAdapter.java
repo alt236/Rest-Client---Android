@@ -93,9 +93,9 @@ public class RequestTabsAdapter extends FragmentPagerAdapter implements TabHost.
 	}
 
 	final static class TabInfo {
-		private final String tag;
-		private final RestRequestFragmentInterface frag;
-		private final Bundle args;
+		protected final String tag;
+		protected final RestRequestFragmentInterface frag;
+		protected final Bundle args;
 
 		TabInfo(String _tag, Class<? extends RestRequestFragmentInterface> _class, Bundle _args) {
 			tag = _tag;
