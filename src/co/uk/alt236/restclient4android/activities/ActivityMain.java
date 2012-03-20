@@ -15,24 +15,30 @@
  */
 package co.uk.alt236.restclient4android.activities;
 
+import android.content.Intent;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.Menu;
 import android.support.v4.view.MenuItem;
 import android.support.v4.view.ViewPager;
+import android.util.Log;
 import android.view.MenuInflater;
 import android.widget.TabHost;
 import android.widget.Toast;
 import co.uk.alt236.restclient4android.R;
 import co.uk.alt236.restclient4android.RestClient4AndroidApplication;
-import co.uk.alt236.restclient4android.adapter.RequestTabsAdapter;
+import co.uk.alt236.restclient4android.adapters.RequestTabsAdapter;
 import co.uk.alt236.restclient4android.fragments.FragmentBody;
 import co.uk.alt236.restclient4android.fragments.FragmentHeaders;
+import co.uk.alt236.restclient4android.fragments.FragmentNetworkResult;
 import co.uk.alt236.restclient4android.fragments.FragmentTarget;
 import co.uk.alt236.restclient4android.fragments.RestRequestFragmentInterface;
 
 public class ActivityMain extends FragmentActivity {
-
+	private final String TAG = this.getClass().getName();
+	
 	private static final String TAB_TARGET = "tab_target";
 	private static final String TAB_HEADERS = "tab_headers";
 	private static final String TAB_BODY = "tab_body";
@@ -68,7 +74,7 @@ public class ActivityMain extends FragmentActivity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
-		setContentView(R.layout.fragment_tabs_pager);
+		setContentView(R.layout.activity_main);
 		mTabHost = (TabHost)findViewById(android.R.id.tabhost);
 		mTabHost.setup();
 
@@ -93,7 +99,16 @@ public class ActivityMain extends FragmentActivity {
 		}
 
 		if(RestClient4AndroidApplication.getRequest().isValid()){
-
+			if(isSmallScreen()){
+				Intent i = new Intent(getApplicationContext(), ActivityResult.class);
+	            startActivity(i);
+			} else {
+				Fragment f = new FragmentNetworkResult(RestClient4AndroidApplication.getRequest());
+				FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+				ft.replace(R.id.fragment_container, f);
+				ft.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
+				ft.commit();
+			}
 		} else {
 			Toast.makeText(this, "Invalid request", Toast.LENGTH_SHORT).show();
 		}
@@ -105,4 +120,14 @@ public class ActivityMain extends FragmentActivity {
 		outState.putString("tab", mTabHost.getCurrentTabTag());
 	}
 
+	private boolean isSmallScreen(){
+		Boolean res;
+		if(findViewById(R.id.fragment_container) == null){
+			res = true;
+		} else {
+			res = false;
+		}
+		Log.d(TAG, "^ Is this device a small screen? " + res);
+		return res;
+	}
 }

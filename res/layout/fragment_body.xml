@@ -18,7 +18,7 @@
         android:layout_weight="1"
         android:gravity="top"
         android:hint="@string/body_text_hint">
-
+        
         <requestFocus />
     </EditText>
 

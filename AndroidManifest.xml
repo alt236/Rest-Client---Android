@@ -24,6 +24,9 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity
+            android:name=".activities.ActivityResult"
+            android:theme="@style/Theme.Sherlock.Light" >
+        </activity>
     </application>
-
 </manifest>

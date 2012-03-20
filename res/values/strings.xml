@@ -1,20 +1,39 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="hello">Hello World, RESTClientActivity!</string>
     <string name="app_name">RESTClient</string>
-	<string name="new_fragment">New fragment!</string>
-	<string name="field_label_http_method">Method:</string>
-	<string name="field_label_authentication">Authentication:</string>
-	<string name="field_label_username">Username:</string>
-	<string name="field_label_password">Password:</string>
-	<string name="field_label_url">URL:</string>
-	<string name="tab_label_target">Target</string>
-	<string name="tab_label_headers">Headers</string>
-	<string name="tab_label_body">Body</string>
-	<string name="tab_label_misc">Misc</string>
-	<string name="field_label_body">Body contents:</string>
-	<string name="body_text_hint">Type the body text</string>
-	<string name="menu_execute_rest_call_label">GO</string>
-	<string name="menu_add_header_label">Add</string>
+    
+    <string name="app_acknowledgements">
+        Acknowledgements:\n
+		·Original icon by OCAL (http://www.clker.com/clipart-style-paintbrush.html).
+	</string>
+	
+    <string name="app_copyright">Copyright Alexandros Schillings, 2012</string>
+    
+    <string name="app_changelog">
+        Changelog:\n
+		·v0.0.1: First public release.\n
+	</string>
+	
+    <string name="app_notes"></string>
+    
+    <string name="new_fragment">New fragment!</string>
+    <string name="field_label_http_method">Method:</string>
+    <string name="field_label_authentication">Authentication:</string>
+    <string name="field_label_username">Username:</string>
+    <string name="field_label_password">Password:</string>
+    <string name="field_label_url">URL:</string>
+    <string name="tab_label_target">Target</string>
+    <string name="tab_label_headers">Headers</string>
+    <string name="tab_label_body">Body</string>
+    <string name="tab_label_misc">Misc</string>
+    <string name="field_label_body">Body contents:</string>
+    <string name="body_text_hint">Type the body text</string>
+    <string name="menu_execute_rest_call_label">Go</string>
+    <string name="menu_add_header_label">Add Header</string>
+    <string name="menu_export_label">Export</string>
+    <string name="share_result_via">Share result using:</string>
+    <string name="share_result_title">REST Response</string>
+    <string name="label_response_code">Response Code:</string>
+
 </resources>

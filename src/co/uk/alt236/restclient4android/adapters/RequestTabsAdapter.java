@@ -1,4 +1,4 @@
-package co.uk.alt236.restclient4android.adapter;
+package co.uk.alt236.restclient4android.adapters;
 
 import java.util.ArrayList;
 
