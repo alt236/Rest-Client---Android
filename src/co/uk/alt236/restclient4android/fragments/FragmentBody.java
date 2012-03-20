@@ -24,15 +24,18 @@ import android.view.LayoutInflater;
 import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
 import android.widget.Spinner;
 import co.uk.alt236.restclient4android.R;
+import co.uk.alt236.restclient4android.RestClient4AndroidApplication;
 
 public class FragmentBody extends Fragment implements RestRequestFragmentInterface{
 	private final String TAG = this.getClass().getName();
 	
 	Spinner methodSpinner;
 	Spinner authSpinner;
-
+	EditText body;
+	
 	@Override
 	public int getType() {
 		return FRAGMENT_TYPE_BODY;
@@ -63,12 +66,12 @@ public class FragmentBody extends Fragment implements RestRequestFragmentInterfa
 	}
 
 	private void populateUI(final LayoutInflater inflater, final View parent){
-
+		body = (EditText) parent.findViewById(R.id.editBody);
 	}
 
 	@Override
 	public void updateRequest() {
 		Log.d(TAG, "^ updateRequest()");
-		// TODO Auto-generated method stub
+		if(body != null) { RestClient4AndroidApplication.getRequest().setRequestBody(body.getText().toString());}
 	}
 }

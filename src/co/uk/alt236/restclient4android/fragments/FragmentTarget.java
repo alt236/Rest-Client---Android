@@ -37,7 +37,10 @@ public class FragmentTarget extends Fragment implements RestRequestFragmentInter
 	private final String TAG = this.getClass().getName();
 	Spinner methodSpinner;
 	Spinner authSpinner;
+	
 	EditText url;
+	EditText uname;
+	EditText pass;
 	
 	@Override
 	public int getType() {
@@ -66,7 +69,10 @@ public class FragmentTarget extends Fragment implements RestRequestFragmentInter
 	private void populateUI(final LayoutInflater inflater, final View parent){
 		methodSpinner = (Spinner) parent.findViewById(R.id.spinnerHttpMethod);
 		authSpinner = (Spinner) parent.findViewById(R.id.spinnerAuth);
+		
 		url = (EditText) parent.findViewById(R.id.editUrl);
+		uname = (EditText) parent.findViewById(R.id.editUsername);
+		pass = (EditText) parent.findViewById(R.id.editPassword);
 		
 		authSpinner.setOnItemSelectedListener(new OnItemSelectedListener() {
 			@Override
@@ -97,7 +103,8 @@ public class FragmentTarget extends Fragment implements RestRequestFragmentInter
 	@Override
 	public void updateRequest() {
 		Log.d(TAG, "^ updateRequest()");
-		RestClient4AndroidApplication.getRequest().setUrl(url.getText().toString());
-		// TODO Auto-generated method stub
+		if(url != null) { RestClient4AndroidApplication.getRequest().setUrl(url.getText().toString());}
+		if(uname != null) { RestClient4AndroidApplication.getRequest().setUsername(uname.getText().toString());}
+		if(pass != null) { RestClient4AndroidApplication.getRequest().setPassword(pass.getText().toString());}
 	}
 }

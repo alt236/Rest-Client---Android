@@ -15,7 +15,7 @@ import android.widget.TabWidget;
 import co.uk.alt236.restclient4android.fragments.RestRequestFragmentInterface;
 
 public class RequestTabsAdapter extends FragmentPagerAdapter implements TabHost.OnTabChangeListener, ViewPager.OnPageChangeListener {
-	private final Context mContext;
+	private static Context mContext;
 	private final TabHost mTabHost;
 	private final ViewPager mViewPager;
 	private final ArrayList<TabInfo> mTabs = new ArrayList<TabInfo>();
@@ -48,7 +48,7 @@ public class RequestTabsAdapter extends FragmentPagerAdapter implements TabHost.
 	@Override
 	public Fragment getItem(int position) {
 		TabInfo info = mTabs.get(position);
-		return Fragment.instantiate(mContext, info.clss.getName(), info.args);
+		return (Fragment) info.frag;
 	}
 
 	@Override
@@ -92,15 +92,15 @@ public class RequestTabsAdapter extends FragmentPagerAdapter implements TabHost.
 		}
 	}
 
-	static final class TabInfo {
+	final static class TabInfo {
 		private final String tag;
-		private final Class<? extends RestRequestFragmentInterface> clss;
+		private final RestRequestFragmentInterface frag;
 		private final Bundle args;
 
 		TabInfo(String _tag, Class<? extends RestRequestFragmentInterface> _class, Bundle _args) {
 			tag = _tag;
-			clss = _class;
 			args = _args;
+			frag = (RestRequestFragmentInterface) Fragment.instantiate(mContext, _class.getName(), args);
 		}
 	}
 }
