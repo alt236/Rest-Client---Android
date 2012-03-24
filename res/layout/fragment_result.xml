@@ -62,21 +62,27 @@
 
                     <TextView
                         android:id="@+id/tvResponseBody"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content" />
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:singleLine="false"
+                        android:scrollHorizontally="false"
+                        android:inputType="textMultiLine"
+                        android:autoLink="web|email"/>
                 </ScrollView>
 
-                <FrameLayout
+                <ScrollView
                     android:id="@+id/tab_2"
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent" >
+                    android:layout_height="match_parent"
+                    android:fillViewport="true">
 
-                    <ListView
-                        android:id="@+id/listResultHeaders"
+                    <TextView
+                        android:id="@+id/tvResponseHeaders"
                         android:layout_width="match_parent"
-                        android:layout_height="match_parent" >
-                    </ListView>
-                </FrameLayout>
+                        android:layout_height="wrap_content"
+                        android:singleLine="false"
+                        android:autoLink="web|email" />
+                </ScrollView>
             </FrameLayout>
         </LinearLayout>
     </TabHost>

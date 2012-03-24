@@ -2,9 +2,11 @@ package co.uk.alt236.restclient4android.containers;
 
 import java.util.ArrayList;
 
+import android.os.Parcel;
+import android.os.Parcelable;
 import android.util.Pair;
 
-public class NetworkResult {
+public class NetworkResult implements Parcelable {
 	public static final int INVALID_REPONSE_CODE = -1;
 
 	private int responseCode = INVALID_REPONSE_CODE;
@@ -12,7 +14,7 @@ public class NetworkResult {
 	private String responseBody = "";
 	private boolean completedOk = false;
 	private ErrorType errorType = ErrorType.UNKNOWN;
-	private  ArrayList<Pair<String, String>> responseHeaders;
+	private ArrayList<Pair<String, String>> responseHeaders;
 
 	public NetworkResult() {
 		super();
@@ -75,6 +77,18 @@ public class NetworkResult {
 
 	public void setResponseHeaders(ArrayList<Pair<String, String>> responseHeaders) {
 		this.responseHeaders = responseHeaders;
+	}
+
+	@Override
+	public int describeContents() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	@Override
+	public void writeToParcel(Parcel arg0, int arg1) {
+		// TODO Auto-generated method stub
+		
 	}
 	
 }

@@ -1,12 +1,16 @@
 package co.uk.alt236.restclient4android.fragments;
 
+import java.util.ArrayList;
+
 import android.app.ProgressDialog;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.Menu;
 import android.support.v4.view.MenuItem;
+import android.text.Html;
 import android.util.Log;
+import android.util.Pair;
 import android.view.LayoutInflater;
 import android.view.MenuInflater;
 import android.view.View;
@@ -27,11 +31,14 @@ public class FragmentNetworkResult extends Fragment{
 	private final static String TAB_HEADERS = "tab_headers";
 
 	private NetworkRequest mNetworkRequest;
+	private NetworkResult mNetworkResult;
+	
 	private TabHost mTabHost;	
 
 	
 	private TextView mTvResponseCode;
 	private TextView mTvResponseBody;
+	private TextView mTvResponseHeaders;
 	
 	@Override
 	public void onActivityCreated(Bundle savedInstanceState) {
@@ -74,6 +81,7 @@ public class FragmentNetworkResult extends Fragment{
 		mTabHost = (TabHost)v.findViewById(android.R.id.tabhost);
 		mTvResponseBody = (TextView) v.findViewById(R.id.tvResponseBody);
 		mTvResponseCode = (TextView) v.findViewById(R.id.tvResponseCode);
+		mTvResponseHeaders = (TextView) v.findViewById(R.id.tvResponseHeaders);
 		
 		setupTabs();
 		return v;
@@ -111,22 +119,48 @@ public class FragmentNetworkResult extends Fragment{
 
 		@Override
 		protected void onPostExecute(NetworkResult result) {
+			mNetworkResult = result;
+			displayNetworkResult(result);
+			
 			if(mDialog!=null){
 				if (mDialog.isShowing()){
 					mDialog.dismiss();
 				}
 				mDialog.cancel();
 			}
-			
-			displayNetworkResult(result);
 		}
 	}
+	
 	private void displayNetworkResult(NetworkResult data) {
 		if(data != null){
 			mTvResponseCode.setText(String.valueOf(data.getResponseCode()));
 			mTvResponseBody.setText(data.getResponseBody());
+			
+			ArrayList<Pair<String, String>> headers = data.getResponseHeaders();
+			StringBuffer sb = new StringBuffer();
+			
+			if(headers != null){
+				for(Pair<String,String> pair : headers){       
+					sb.append("<b>");
+					sb.append(pair.first);
+					sb.append("</b>");
+					sb.append(": ");
+					sb.append(pair.second);
+					sb.append("<br>");
+				}
+			}
+			
+			mTvResponseHeaders.setText(Html.fromHtml(sb.toString()));
+			
 		} else {
 			Log.e(TAG, "^ displayNetworkResult() Result was null!");
 		}
 	}
+	
+	@Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putParcelable("network_result", mNetworkResult);
+    }
+
 }

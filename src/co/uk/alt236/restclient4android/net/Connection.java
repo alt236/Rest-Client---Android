@@ -143,6 +143,7 @@ public class Connection {
 				
 				for (String line; (line = reader.readLine()) != null;) {
 					sb.append(line);
+					sb.append("\n");
 				}
 			}catch(IOException ioe){
 				Log.e(TAG, "^ getHttpResponseBody() - IOException when reading stream", ioe);
