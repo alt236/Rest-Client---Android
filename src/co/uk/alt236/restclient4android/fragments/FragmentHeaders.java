@@ -96,6 +96,7 @@ public class FragmentHeaders extends ListFragment implements LoaderManager.Loade
 		// Prepare the loader. Either re-connect with an existing one,
 		// or start a new one.
 		getLoaderManager().initLoader(0, null, this);
+		
 	}
 
 	public Loader<Cursor> onCreateLoader(int id, Bundle args) {

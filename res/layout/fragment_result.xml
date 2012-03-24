@@ -23,7 +23,7 @@
             android:layout_centerVertical="true"
             android:layout_marginLeft="5dp"
             android:layout_toRightOf="@+id/textView1"
-            android:text="Small Text"
+            android:text=""
             android:textAppearance="?android:attr/textAppearanceSmall" />
     </RelativeLayout>
 
@@ -54,16 +54,17 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent" >
 
-                <FrameLayout
+                <ScrollView
                     android:id="@+id/tab_1"
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent" >
+                    android:layout_height="match_parent"
+                    android:fillViewport="true">
 
                     <TextView
-                        android:id="@+id/editResultBody"
+                        android:id="@+id/tvResponseBody"
                         android:layout_width="match_parent"
-                        android:layout_height="match_parent" />
-                </FrameLayout>
+                        android:layout_height="wrap_content" />
+                </ScrollView>
 
                 <FrameLayout
                     android:id="@+id/tab_2"

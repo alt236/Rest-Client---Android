@@ -35,10 +35,11 @@ import co.uk.alt236.restclient4android.fragments.FragmentHeaders;
 import co.uk.alt236.restclient4android.fragments.FragmentNetworkResult;
 import co.uk.alt236.restclient4android.fragments.FragmentTarget;
 import co.uk.alt236.restclient4android.fragments.RestRequestFragmentInterface;
+import co.uk.alt236.restclient4android.util.UsefulBits;
 
-public class ActivityMain extends FragmentActivity {
+public class ActivityMain extends FragmentActivity{
 	private final String TAG = this.getClass().getName();
-	
+
 	private static final String TAB_TARGET = "tab_target";
 	private static final String TAB_HEADERS = "tab_headers";
 	private static final String TAB_BODY = "tab_body";
@@ -46,6 +47,7 @@ public class ActivityMain extends FragmentActivity {
 	TabHost mTabHost;
 	ViewPager  mViewPager;
 	RequestTabsAdapter mTabsAdapter;
+	UsefulBits mUsefulBits;
 
 	private void addTab(TabHost tabHost, RequestTabsAdapter tabAdapter, String tabSpec, String title, Class<? extends RestRequestFragmentInterface> clss, Bundle args){
 		tabAdapter.addTab(tabHost.newTabSpec(tabSpec).setIndicator(title), clss, args);
@@ -55,6 +57,7 @@ public class ActivityMain extends FragmentActivity {
 	public boolean onCreateOptionsMenu(Menu menu) {
 		MenuInflater inflater = getMenuInflater();
 		inflater.inflate(R.menu.menu_main, menu);
+
 		return true;
 	}
 
@@ -73,6 +76,7 @@ public class ActivityMain extends FragmentActivity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		mUsefulBits = new UsefulBits(this);
 
 		setContentView(R.layout.activity_main);
 		mTabHost = (TabHost)findViewById(android.R.id.tabhost);
@@ -99,15 +103,19 @@ public class ActivityMain extends FragmentActivity {
 		}
 
 		if(RestClient4AndroidApplication.getRequest().isValid()){
-			if(isSmallScreen()){
-				Intent i = new Intent(getApplicationContext(), ActivityResult.class);
-	            startActivity(i);
+			if(mUsefulBits.isOnline()){
+				if(isSmallScreen()){
+					Intent i = new Intent(getApplicationContext(), ActivityResult.class);
+					startActivity(i);
+				} else {
+					Fragment f = new FragmentNetworkResult(RestClient4AndroidApplication.getRequest());
+					FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+					ft.replace(R.id.fragment_container, f);
+					ft.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
+					ft.commit();
+				}
 			} else {
-				Fragment f = new FragmentNetworkResult(RestClient4AndroidApplication.getRequest());
-				FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-				ft.replace(R.id.fragment_container, f);
-				ft.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
-				ft.commit();
+				Toast.makeText(this, "Not online!", Toast.LENGTH_SHORT).show();
 			}
 		} else {
 			Toast.makeText(this, "Invalid request", Toast.LENGTH_SHORT).show();
