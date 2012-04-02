@@ -8,6 +8,7 @@ public class NetworkRequest {
 	private ArrayList<Pair<String, String>> requestHeaders = new ArrayList<Pair<String, String>>();
 	private String requestBody = "";
 	private String action = "";
+	private String authenticationMethod = "";
 	private String url = "";
 	private String username = "";
 	private String password = "";
@@ -58,6 +59,14 @@ public class NetworkRequest {
 
 	public void setAction(String action) {
 		this.action = action;
+	}
+
+	public String getAuthenticationMethod() {
+		return authenticationMethod;
+	}
+
+	public void setAuthenticationMethod(String authenticationMethod) {
+		this.authenticationMethod = authenticationMethod;
 	}
 
 	public boolean isValid() {

@@ -4,65 +4,89 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.net.URLConnection;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
+
+import org.apache.http.Header;
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpResponse;
+import org.apache.http.StatusLine;
+import org.apache.http.client.ClientProtocolException;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpDelete;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.HttpHead;
+import org.apache.http.client.methods.HttpOptions;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.client.methods.HttpPut;
+import org.apache.http.client.methods.HttpRequestBase;
+import org.apache.http.client.methods.HttpTrace;
+import org.apache.http.impl.client.DefaultHttpClient;
 
 import android.util.Log;
 import android.util.Pair;
 import co.uk.alt236.restclient4android.containers.NetworkRequest;
 import co.uk.alt236.restclient4android.containers.NetworkResult;
 import co.uk.alt236.restclient4android.containers.NetworkResult.ErrorType;
-
-import com.github.droidfu.http.BetterHttpRequest;
+import co.uk.alt236.restclient4android.util.Base64;
 
 public class Connection {
 	private final String TAG =  this.getClass().getName();
 
-	public NetworkResult connect(NetworkRequest request){
+	public NetworkResult execute(NetworkRequest request){
 		if(request == null){return null;}
 		
-		String urlString = request.getUrl();
-
-		if(!(urlString.toLowerCase().startsWith("http://") || urlString.toLowerCase().startsWith("https://"))){
-			urlString = "http://" + urlString;
-		}
-
-
-		Log.i(TAG, "^ Connecting to: " + urlString);
-
-		URL url = null;
-		HttpURLConnection  httpCon = null;
+		URI uri = null;
 		int responseCode = NetworkResult.INVALID_REPONSE_CODE;
+		
 		NetworkResult result = new NetworkResult();
-
+		HttpClient httpclient = new DefaultHttpClient();
+		
+		request.setUrl(firxUrl(request.getUrl()));
+		
+		Log.i(TAG, "^ Connecting to: " + request.getUrl());
+		
 		try{
-			url = new URL(urlString);
-		}catch(MalformedURLException mue){
-			Log.e(TAG, "^ connect() - MalformedURLException.",mue); 
+			uri = new URI(request.getUrl());
+		}catch(URISyntaxException e){
+			Log.e(TAG, "^ connect() - MalformedURLException.",e); 
 			result.completedUnsuccesfully(ErrorType.INVALID_URL);
 			return result;
 		}
+		
 		Log.d(TAG, "^ URL OK!");
-
-		try{
-			httpCon = (HttpURLConnection) url.openConnection(); 
-			httpCon.setConnectTimeout(5 * 1000);
-		}catch(IOException ioe){
-			Log.e(TAG, "^ connect() - IOException.",ioe); 
+		
+		HttpRequestBase httpRequest = setupHttpRequest(request, uri);
+		
+		// something went wrong...
+		if(httpRequest == null){
+			Log.e(TAG, "^ connect() - NULL after setupHttpRequest()");
+			return null;
+		}
+		
+		
+		HttpResponse response = null;
+		
+		try {
+			response = httpclient.execute(httpRequest);
+		} catch (ClientProtocolException e) {
+			Log.e(TAG, "^ connect() - ClientProtocolException.",e); 
+			result.completedUnsuccesfully(ErrorType.HTTP_PROTOCOL_ERROR);
+			return result;
+		} catch (IOException e) {
+			Log.e(TAG, "^ connect() - IOException.",e); 
 			result.completedUnsuccesfully(ErrorType.IO_EXCEPTION);
 			return result;
 		}
-
-		responseCode = getHttpResponseCode(httpCon);
+		
+		
+		//HttpEntity entity = response.getEntity();
+		
+		responseCode = getResponseCode(response);
 		result.setResponseCode(responseCode);
-		result.setResponseBody(getHttpResponseBody(httpCon));
-		result.setResponseHeaders(getHttpResponseHeaders(httpCon));
+		result.setResponseBody(getBody(response));
+		result.setResponseHeaders(getHeaders(response));
 
 		if(responseCode != NetworkResult.INVALID_REPONSE_CODE){
 			result.completedSuccesfully();
@@ -72,28 +96,110 @@ public class Connection {
 
 		return result;
 	}
-
-	private ArrayList<Pair<String, String>> getHttpResponseHeaders(URLConnection urlc) {
+	
+	
+	
+	private HttpRequestBase setupHttpRequest(NetworkRequest request, URI uri){
+		String method = request.getAction().toUpperCase();
+		HttpRequestBase  httpReq = null;
+		
+		if("GET".equals(method)){
+			httpReq = new HttpGet(uri);
+		}else if("POST".equals(method)){
+			httpReq = new HttpPost(uri);
+		}else if("PUT".equals(method)){
+			httpReq = new HttpPut(uri);
+		}else if("DELETE".equals(method)){
+			httpReq = new HttpDelete(uri);
+		}else if("HEAD".equals(method)){
+			httpReq = new HttpHead(uri);
+		}else if("TRACE".equals(method)){
+			httpReq = new HttpTrace(uri);
+		}else if("OPTIONS".equals(method)){
+			httpReq = new HttpOptions(uri);
+		}
+		
+		
+		setAuthentication(httpReq, request);
+		setHeaders(httpReq, request);
+		
+		return httpReq;
+	}
+	
+	
+	
+	
+	
+	private String firxUrl(String url){
+		url = url.trim();
+		
+		if(!(url.toLowerCase().startsWith("http://") || url.toLowerCase().startsWith("https://"))){
+			return "http://" + url;
+		}
+		
+		return url;
+	}
+	
+	private void setAuthentication(HttpRequestBase con, NetworkRequest req){
+		String reqString = req.getAuthenticationMethod();
+		
+		if(reqString != null && reqString.length() > 0){
+			reqString = reqString.toLowerCase();
+			if("none".equals(reqString)){
+				return;
+			}
+			else if ("basic".equals(reqString)){
+				byte[] token = (req.getUsername() + ":" + req.getPassword()).getBytes();
+				String authorizationString = "Basic " + Base64.encodeBytes(token);
+				con.addHeader("Authorization", authorizationString);
+			} else {
+				Log.w(TAG, "^ Unknown authentication method: '" + reqString + "'");
+			}
+			
+		}
+	}
+	
+	
+	private void setHeaders(HttpRequestBase con, NetworkRequest req){
+//		String reqString = req.getAuthenticationMethod();
+//		
+//		if(reqString != null && reqString.length() > 0){
+//			reqString = reqString.toLowerCase();
+//			if("none".equals(reqString)){
+//				return;
+//			}
+//			else if ("basic".equals(reqString)){
+//				byte[] token = (req.getUsername() + ":" + req.getPassword()).getBytes();
+//				String authorizationString = "Basic " + Base64.encodeBytes(token);
+//				con.addHeader("Authorization", authorizationString);
+//			} else {
+//				Log.w(TAG, "^ Unknown authentication method: '" + reqString + "'");
+//			}
+//			
+//		}
+	}
+	
+	private ArrayList<Pair<String, String>> getHeaders(HttpResponse response) {
 		ArrayList<Pair<String, String>> headers = new ArrayList<Pair<String,String>>();
-		Map<String, List<String>> map = urlc.getHeaderFields();
+		Header[] httpHeaders = response.getAllHeaders();
 
-		for (Entry<String, List<String>> entry : map.entrySet())
+		if(httpHeaders == null){
+			return headers;
+		}
+		
+		for (Header entry : httpHeaders)
 		{
-			String headerName = entry.getKey();
-			List<String> valueList = entry.getValue();
+			String headerName = entry.getName();
+			String headerValue = entry.getValue();
 
 			if(headerName == null){
 				headerName = "";
 			}
-
-			if(valueList != null){
-
-				for(String headerValue : entry.getValue()){
-					headers.add(new Pair<String, String>(headerName, headerValue));
-				}
-			} else {
-				headers.add(new Pair<String, String>(headerName, ""));
+			if(headerValue == null){
+				headerValue = "";
 			}
+			
+			headers.add(new Pair<String, String>(headerName, headerValue));
 		}
 
 
@@ -101,35 +207,43 @@ public class Connection {
 		return headers;
 	}
 
-	private int getHttpResponseCode(HttpURLConnection connection){
+	private int getResponseCode(HttpResponse response){
 		int res = NetworkResult.INVALID_REPONSE_CODE;
 
-		HttpURLConnection httpConnection = (HttpURLConnection) connection;
-		try {
-			res = httpConnection.getResponseCode();
-		} catch (IOException e) {
-			Log.e(TAG, "^ getHttpResponseCode() IOException.", e);
+		StatusLine status = response.getStatusLine();
+		
+		if(status != null){
+			res = status.getStatusCode();
 		}
-
+		
 		return res;
 	}
 
 
-	private String getHttpResponseBody(HttpURLConnection connection){
-		InputStream response;
-		try {
-			response = connection.getInputStream();
-		} catch (IOException e) {
-			Log.e(TAG, "^ getHttpResponseBody() - IOException when getting stream", e);
+	private String getBody(HttpResponse response){
+		HttpEntity entity = response.getEntity();
+		
+		InputStream responseStream;
+		
+		if(entity != null){
+			try {
+				responseStream = entity.getContent();
+			} catch (IOException e) {
+				Log.e(TAG, "^ getHttpResponseBody() - IOException when getting stream", e);
+				return "";
+			}
+			
+		} else {
 			return "";
 		}
 		
 		StringBuffer sb = new StringBuffer();
 		
-		String contentType = connection.getHeaderField("Content-Type");
+		Header contentType = entity.getContentType();
+		
 		String charset = null;
 		
-		for (String param : contentType.replace(" ", "").split(";")) {
+		for (String param : contentType.getValue().replace(" ", "").split(";")) {
 			if (param.startsWith("charset=")) {
 				charset = param.split("=", 2)[1];
 				break;
@@ -139,12 +253,13 @@ public class Connection {
 		if (charset != null) {
 			BufferedReader reader = null;
 			try {
-				reader = new BufferedReader(new InputStreamReader(response, charset));
+				reader = new BufferedReader(new InputStreamReader(responseStream, charset));
 				
 				for (String line; (line = reader.readLine()) != null;) {
 					sb.append(line);
 					sb.append("\n");
 				}
+				
 			}catch(IOException ioe){
 				Log.e(TAG, "^ getHttpResponseBody() - IOException when reading stream", ioe);
 			} finally {
@@ -155,16 +270,5 @@ public class Connection {
 		}
 		
 		return sb.toString();
-	}
-
-
-	private void addRequestHeaders(BetterHttpRequest req, ArrayList<Pair<String, String>> headers) {
-		if (req != null && req.unwrap() != null && headers != null) {
-
-			for(Pair<String, String> header : headers){
-				req.unwrap().addHeader(header.first, header.second);
-			}
-
-		}
 	}
 }

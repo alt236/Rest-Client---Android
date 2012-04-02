@@ -114,7 +114,7 @@ public class FragmentNetworkResult extends Fragment{
 		@Override
 		protected NetworkResult doInBackground(NetworkRequest... requests) {
 			Connection connection = new Connection();
-			return connection.connect(requests[0]);
+			return connection.execute(requests[0]);
 		}
 
 		@Override

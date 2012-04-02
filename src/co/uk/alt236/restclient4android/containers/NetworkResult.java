@@ -58,7 +58,7 @@ public class NetworkResult implements Parcelable {
 	}
 
 	public enum ErrorType{
-		UNKNOWN, NO_ERROR, INVALID_URL, CONNECTION_EXCEPTION, JSON_EXCEPTION, IO_EXCEPTION
+		UNKNOWN, NO_ERROR, INVALID_URL, CONNECTION_EXCEPTION, JSON_EXCEPTION, IO_EXCEPTION, HTTP_PROTOCOL_ERROR
 	}
 
 	public void completedSuccesfully(){
