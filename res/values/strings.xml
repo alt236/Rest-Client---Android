@@ -34,6 +34,8 @@
     <string name="menu_export_label">Export</string>
     <string name="share_result_via">Share result using:</string>
     <string name="share_result_title">REST Response</string>
-    <string name="label_response_code">Response Code:</string>
+    <string name="label_response_code">Code:</string>
+    <string name="label_url">URL:</string>
+    <string name="label_header_name">Header Name:</string>
 
 </resources>

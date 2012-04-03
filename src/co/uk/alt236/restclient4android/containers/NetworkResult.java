@@ -1,3 +1,18 @@
+/*******************************************************************************
+ * Copyright 2012 Alexandros Schillings
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * 
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ ******************************************************************************/
 package co.uk.alt236.restclient4android.containers;
 
 import java.util.ArrayList;
@@ -6,55 +21,58 @@ import android.os.Parcel;
 import android.os.Parcelable;
 import android.util.Pair;
 
-public class NetworkResult implements Parcelable {
+public class NetworkResult {
 	public static final int INVALID_REPONSE_CODE = -1;
 
-	private int responseCode = INVALID_REPONSE_CODE;
+	private int mResponseCode = INVALID_REPONSE_CODE;
 
-	private String responseBody = "";
-	private boolean completedOk = false;
-	private ErrorType errorType = ErrorType.UNKNOWN;
-	private ArrayList<Pair<String, String>> responseHeaders;
+	private String mUrl = "";
+	private String mResponseBody = "";
+	private boolean mCompletedOk = false;
+	private ErrorType mErrorType = ErrorType.UNKNOWN;
+	private ArrayList<Pair<String, String>> mResponseHeaders;
 
-	public NetworkResult() {
+	public NetworkResult(String url) {
 		super();
+		this.mUrl = url;
 	}
 
-	public NetworkResult(int responseCode, String responseBody, boolean completedOk) {
+	public NetworkResult(String url, int responseCode, String responseBody, boolean completedOk) {
 		super();
-		this.responseCode = responseCode;
-		this.responseBody = responseBody;
-		this.completedOk = completedOk;
+		this.mResponseCode = responseCode;
+		this.mResponseBody = responseBody;
+		this.mCompletedOk = completedOk;
+		this.mUrl = url;
 	}
 
 	public ErrorType getErrorType() {
-		return errorType;
+		return mErrorType;
 	}
 
 	public String getResponseBody() {
-		return responseBody;
+		return mResponseBody;
 	}
 
 	public int getResponseCode() {
-		return responseCode;
+		return mResponseCode;
 	}
 
 	public boolean isCompletedOk() {
-		return completedOk;
+		return mCompletedOk;
 	}
 	//	public void setCompletedOk(boolean completedOk) {
 	//		this.completedOk = completedOk;
 	//	}
 	
 	public void setErrorType(ErrorType errorType) {
-		this.errorType = errorType;
+		this.mErrorType = errorType;
 	}
 	public void setResponseBody(String responseBody) {
-		this.responseBody = responseBody;
+		this.mResponseBody = responseBody;
 	}
 
 	public void setResponseCode(int responseCode) {
-		this.responseCode = responseCode;
+		this.mResponseCode = responseCode;
 	}
 
 	public enum ErrorType{
@@ -62,33 +80,24 @@ public class NetworkResult implements Parcelable {
 	}
 
 	public void completedSuccesfully(){
-		this.completedOk = true;
-		this.errorType = ErrorType.NO_ERROR;
+		this.mCompletedOk = true;
+		this.mErrorType = ErrorType.NO_ERROR;
 	}
 
 	public void completedUnsuccesfully(ErrorType errorType){
-		this.completedOk = false;
-		this.errorType = errorType;
+		this.mCompletedOk = false;
+		this.mErrorType = errorType;
 	}
 
 	public ArrayList<Pair<String, String>> getResponseHeaders() {
-		return responseHeaders;
+		return mResponseHeaders;
 	}
 
 	public void setResponseHeaders(ArrayList<Pair<String, String>> responseHeaders) {
-		this.responseHeaders = responseHeaders;
+		this.mResponseHeaders = responseHeaders;
 	}
 
-	@Override
-	public int describeContents() {
-		// TODO Auto-generated method stub
-		return 0;
+	public String getUrl() {
+		return mUrl;
 	}
-
-	@Override
-	public void writeToParcel(Parcel arg0, int arg1) {
-		// TODO Auto-generated method stub
-		
-	}
-	
 }

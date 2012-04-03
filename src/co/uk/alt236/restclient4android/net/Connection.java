@@ -1,3 +1,18 @@
+/*******************************************************************************
+ * Copyright 2012 Alexandros Schillings
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * 
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ ******************************************************************************/
 package co.uk.alt236.restclient4android.net;
 
 import java.io.BufferedReader;
@@ -40,10 +55,11 @@ public class Connection {
 		URI uri = null;
 		int responseCode = NetworkResult.INVALID_REPONSE_CODE;
 		
-		NetworkResult result = new NetworkResult();
+		
 		HttpClient httpclient = new DefaultHttpClient();
 		
 		request.setUrl(firxUrl(request.getUrl()));
+		NetworkResult result = new NetworkResult(request.getUrl());
 		
 		Log.i(TAG, "^ Connecting to: " + request.getUrl());
 		
@@ -125,10 +141,6 @@ public class Connection {
 		
 		return httpReq;
 	}
-	
-	
-	
-	
 	
 	private String firxUrl(String url){
 		url = url.trim();

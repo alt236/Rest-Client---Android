@@ -3,29 +3,48 @@
     android:layout_height="match_parent"
     android:orientation="vertical" >
 
-    <RelativeLayout
-        android:id="@+id/relativeLayout1"
-        android:layout_width="match_parent"
+    <TableLayout
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content" >
-
-        <TextView
-            android:id="@+id/textView1"
+        <TableRow
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerVertical="true"
-            android:text="@string/label_response_code"
-            android:textAppearance="?android:attr/textAppearanceMedium" />
+            android:layout_height="wrap_content" >
 
-        <TextView
-            android:id="@+id/tvResponseCode"
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/label_url"
+                android:textAppearance="?android:attr/textAppearanceSmall" />
+
+            <co.uk.alt236.restclient4android.views.MarqueeTextView
+                android:id="@+id/tvUrl"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="5dp"
+                android:text=""
+                android:singleLine="true"
+                android:textAppearance="?android:attr/textAppearanceSmall" />
+        </TableRow>
+        
+        <TableRow
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerVertical="true"
-            android:layout_marginLeft="5dp"
-            android:layout_toRightOf="@+id/textView1"
-            android:text=""
-            android:textAppearance="?android:attr/textAppearanceSmall" />
-    </RelativeLayout>
+            android:layout_height="wrap_content" >
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/label_response_code"
+                android:textAppearance="?android:attr/textAppearanceSmall" />
+
+            <TextView
+                android:id="@+id/tvResponseCode"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="5dp"
+                android:text=""
+                android:textAppearance="?android:attr/textAppearanceSmall" />
+        </TableRow>
+    </TableLayout>
 
     <View
         android:layout_width="match_parent"
@@ -58,30 +77,30 @@
                     android:id="@+id/tab_1"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:fillViewport="true">
+                    android:fillViewport="true" >
 
                     <TextView
                         android:id="@+id/tvResponseBody"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:singleLine="false"
-                        android:scrollHorizontally="false"
+                        android:autoLink="web|email"
                         android:inputType="textMultiLine"
-                        android:autoLink="web|email"/>
+                        android:scrollHorizontally="false"
+                        android:singleLine="false" />
                 </ScrollView>
 
                 <ScrollView
                     android:id="@+id/tab_2"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:fillViewport="true">
+                    android:fillViewport="true" >
 
                     <TextView
                         android:id="@+id/tvResponseHeaders"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:singleLine="false"
-                        android:autoLink="web|email" />
+                        android:autoLink="web|email"
+                        android:singleLine="false" />
                 </ScrollView>
             </FrameLayout>
         </LinearLayout>

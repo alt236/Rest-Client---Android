@@ -1,3 +1,18 @@
+/*******************************************************************************
+ * Copyright 2012 Alexandros Schillings
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * 
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ ******************************************************************************/
 package co.uk.alt236.restclient4android.fragments;
 
 import java.util.ArrayList;
@@ -19,6 +34,7 @@ import android.widget.TabHost;
 import android.widget.TabHost.TabSpec;
 import android.widget.TextView;
 import co.uk.alt236.restclient4android.R;
+import co.uk.alt236.restclient4android.RestClient4AndroidApplication;
 import co.uk.alt236.restclient4android.containers.NetworkRequest;
 import co.uk.alt236.restclient4android.containers.NetworkResult;
 import co.uk.alt236.restclient4android.net.Connection;
@@ -31,7 +47,6 @@ public class FragmentNetworkResult extends Fragment{
 	private final static String TAB_HEADERS = "tab_headers";
 
 	private NetworkRequest mNetworkRequest;
-	private NetworkResult mNetworkResult;
 	
 	private TabHost mTabHost;	
 
@@ -39,19 +54,25 @@ public class FragmentNetworkResult extends Fragment{
 	private TextView mTvResponseCode;
 	private TextView mTvResponseBody;
 	private TextView mTvResponseHeaders;
+	private TextView mTvUrl;
 	
 	@Override
 	public void onActivityCreated(Bundle savedInstanceState) {
 		super.onActivityCreated(savedInstanceState);
+		
+		if(RestClient4AndroidApplication.getResult() == null){
+			(new HttpConnectionTask()).execute(mNetworkRequest);
+		} else {
+			displayNetworkResult(RestClient4AndroidApplication.getResult());
+		}
 	}
 
 	@Override
 	public void onCreate(Bundle saved) {
 		super.onCreate(saved);
 		setHasOptionsMenu(true);
-		(new HttpConnectionTask()).execute(mNetworkRequest);
 	}
-
+	
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
 		case R.id.menu_export:
@@ -82,6 +103,7 @@ public class FragmentNetworkResult extends Fragment{
 		mTvResponseBody = (TextView) v.findViewById(R.id.tvResponseBody);
 		mTvResponseCode = (TextView) v.findViewById(R.id.tvResponseCode);
 		mTvResponseHeaders = (TextView) v.findViewById(R.id.tvResponseHeaders);
+		mTvUrl = (TextView) v.findViewById(R.id.tvUrl);
 		
 		setupTabs();
 		return v;
@@ -119,7 +141,8 @@ public class FragmentNetworkResult extends Fragment{
 
 		@Override
 		protected void onPostExecute(NetworkResult result) {
-			mNetworkResult = result;
+			RestClient4AndroidApplication.setResult(result);
+			
 			displayNetworkResult(result);
 			
 			if(mDialog!=null){
@@ -134,7 +157,9 @@ public class FragmentNetworkResult extends Fragment{
 	private void displayNetworkResult(NetworkResult data) {
 		if(data != null){
 			mTvResponseCode.setText(String.valueOf(data.getResponseCode()));
-			mTvResponseBody.setText(data.getResponseBody());
+			mTvUrl.setText(data.getUrl());
+			
+			displayResultBody(data.getResponseBody());
 			
 			ArrayList<Pair<String, String>> headers = data.getResponseHeaders();
 			StringBuffer sb = new StringBuffer();
@@ -157,10 +182,14 @@ public class FragmentNetworkResult extends Fragment{
 		}
 	}
 	
-	@Override
-    public void onSaveInstanceState(Bundle outState) {
-        super.onSaveInstanceState(outState);
-        outState.putParcelable("network_result", mNetworkResult);
-    }
-
+	
+	
+	private void displayResultBody(String body){
+		if(body == null){
+			mTvResponseBody.setText("");
+			return;
+		}
+		
+		mTvResponseBody.setText(body);
+	}
 }

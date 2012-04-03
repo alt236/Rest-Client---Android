@@ -19,7 +19,7 @@
         <activity
             android:name=".activities.ActivityMain"
             android:label="@string/app_name"
-            android:theme="@style/Theme.Sherlock.Light" >
+            android:theme="@style/Theme.Sherlock" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -28,7 +28,7 @@
         </activity>
         <activity
             android:name=".activities.ActivityResult"
-            android:theme="@style/Theme.Sherlock.Light" >
+            android:theme="@style/Theme.Sherlock" >
         </activity>
     </application>
 </manifest>
