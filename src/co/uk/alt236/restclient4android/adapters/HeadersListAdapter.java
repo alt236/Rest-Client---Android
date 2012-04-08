@@ -38,7 +38,8 @@ public class HeadersListAdapter extends ArrayAdapter<Pair<String, String>> {
             text1.setText(item.first);
             text2.setText(item.second);
          }
-
+        
+        view.setTag(position);
         return view;
     }
 }

@@ -17,8 +17,6 @@ package co.uk.alt236.restclient4android.containers;
 
 import java.util.ArrayList;
 
-import android.os.Parcel;
-import android.os.Parcelable;
 import android.util.Pair;
 
 public class NetworkResult {

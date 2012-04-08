@@ -37,5 +37,8 @@
     <string name="label_response_code">Code:</string>
     <string name="label_url">URL:</string>
     <string name="label_header_name">Header Name:</string>
+    <string name="button_label_save">Save</string>
+    <string name="button_label_delete">Delete</string>
+    <string name="button_label_cancel">Cancel</string>
 
 </resources>

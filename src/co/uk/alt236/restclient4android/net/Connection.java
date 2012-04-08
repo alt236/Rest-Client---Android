@@ -37,7 +37,9 @@ import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpPut;
 import org.apache.http.client.methods.HttpRequestBase;
 import org.apache.http.client.methods.HttpTrace;
+import org.apache.http.entity.ByteArrayEntity;
 import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.message.BasicHeader;
 
 import android.util.Log;
 import android.util.Pair;
@@ -113,26 +115,44 @@ public class Connection {
 		return result;
 	}
 	
-	
-	
 	private HttpRequestBase setupHttpRequest(NetworkRequest request, URI uri){
 		String method = request.getAction().toUpperCase();
+		String body = request.getRequestBody();
+		
 		HttpRequestBase  httpReq = null;
+		HttpEntity entity = null;
+		
+		if(body != null){
+			body = body.trim();
+			if(body.length() > 0){
+				entity = new ByteArrayEntity(body.getBytes());
+			}
+		}
 		
 		if("GET".equals(method)){
 			httpReq = new HttpGet(uri);
+			
 		}else if("POST".equals(method)){
 			httpReq = new HttpPost(uri);
+			
+			if(entity != null){
+				((HttpPost) httpReq).setEntity(entity);
+			}
+			
 		}else if("PUT".equals(method)){
 			httpReq = new HttpPut(uri);
+			if(entity != null){
+				((HttpPut) httpReq).setEntity(entity);
+			}
+			
 		}else if("DELETE".equals(method)){
-			httpReq = new HttpDelete(uri);
+			httpReq = new HttpDelete(uri);			
 		}else if("HEAD".equals(method)){
-			httpReq = new HttpHead(uri);
+			httpReq = new HttpHead(uri);			
 		}else if("TRACE".equals(method)){
-			httpReq = new HttpTrace(uri);
+			httpReq = new HttpTrace(uri);			
 		}else if("OPTIONS".equals(method)){
-			httpReq = new HttpOptions(uri);
+			httpReq = new HttpOptions(uri);			
 		}
 		
 		
@@ -173,22 +193,11 @@ public class Connection {
 	
 	
 	private void setHeaders(HttpRequestBase con, NetworkRequest req){
-//		String reqString = req.getAuthenticationMethod();
-//		
-//		if(reqString != null && reqString.length() > 0){
-//			reqString = reqString.toLowerCase();
-//			if("none".equals(reqString)){
-//				return;
-//			}
-//			else if ("basic".equals(reqString)){
-//				byte[] token = (req.getUsername() + ":" + req.getPassword()).getBytes();
-//				String authorizationString = "Basic " + Base64.encodeBytes(token);
-//				con.addHeader("Authorization", authorizationString);
-//			} else {
-//				Log.w(TAG, "^ Unknown authentication method: '" + reqString + "'");
-//			}
-//			
-//		}
+		
+		for(Pair<String, String> myHeader: req.getRequestHeaders()){
+			Header header = new BasicHeader(myHeader.first, myHeader.second);
+			con.addHeader(header);
+		}
 	}
 	
 	private ArrayList<Pair<String, String>> getHeaders(HttpResponse response) {
