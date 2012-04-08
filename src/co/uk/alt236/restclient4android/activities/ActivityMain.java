@@ -83,6 +83,9 @@ public class ActivityMain extends FragmentActivity{
 		case R.id.menu_execute_rest_call:
 			executeRequest();
 			return true;
+		case R.id.menu_about:
+			mUsefulBits.showAboutDialogue();
+			return true;
 		}
 
 		return false;

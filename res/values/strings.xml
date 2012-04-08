@@ -40,5 +40,6 @@
     <string name="button_label_save">Save</string>
     <string name="button_label_delete">Delete</string>
     <string name="button_label_cancel">Cancel</string>
+    <string name="menu_about">About</string>
 
 </resources>

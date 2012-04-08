@@ -63,23 +63,23 @@ public class Connection {
 		request.setUrl(firxUrl(request.getUrl()));
 		NetworkResult result = new NetworkResult(request.getUrl());
 		
-		Log.i(TAG, "^ Connecting to: " + request.getUrl());
+		Log.i(TAG, "^ CONNECTION: Connecting to: " + request.getUrl());
 		
 		try{
 			uri = new URI(request.getUrl());
 		}catch(URISyntaxException e){
-			Log.e(TAG, "^ connect() - MalformedURLException.",e); 
+			Log.e(TAG, "^ CONNECTION: - MalformedURLException.",e); 
 			result.completedUnsuccesfully(ErrorType.INVALID_URL);
 			return result;
 		}
 		
-		Log.d(TAG, "^ URL OK!");
+		//Log.d(TAG, "^ CONNECTION: URL OK!");
 		
 		HttpRequestBase httpRequest = setupHttpRequest(request, uri);
 		
 		// something went wrong...
 		if(httpRequest == null){
-			Log.e(TAG, "^ connect() - NULL after setupHttpRequest()");
+			Log.e(TAG, "^ CONNECTION: - NULL after setupHttpRequest()");
 			return null;
 		}
 		
@@ -89,11 +89,11 @@ public class Connection {
 		try {
 			response = httpclient.execute(httpRequest);
 		} catch (ClientProtocolException e) {
-			Log.e(TAG, "^ connect() - ClientProtocolException.",e); 
+			Log.e(TAG, "^ CONNECTION: - ClientProtocolException.",e); 
 			result.completedUnsuccesfully(ErrorType.HTTP_PROTOCOL_ERROR);
 			return result;
 		} catch (IOException e) {
-			Log.e(TAG, "^ connect() - IOException.",e); 
+			Log.e(TAG, "^ CONNECTION: - IOException.",e); 
 			result.completedUnsuccesfully(ErrorType.IO_EXCEPTION);
 			return result;
 		}
@@ -155,7 +155,6 @@ public class Connection {
 			httpReq = new HttpOptions(uri);			
 		}
 		
-		
 		setAuthentication(httpReq, request);
 		setHeaders(httpReq, request);
 		
@@ -173,6 +172,8 @@ public class Connection {
 	}
 	
 	private void setAuthentication(HttpRequestBase con, NetworkRequest req){
+		Log.i(TAG, "^ CONNECTION: Adding authentication");
+		
 		String reqString = req.getAuthenticationMethod();
 		
 		if(reqString != null && reqString.length() > 0){
@@ -193,6 +194,7 @@ public class Connection {
 	
 	
 	private void setHeaders(HttpRequestBase con, NetworkRequest req){
+		Log.i(TAG, "^ CONNECTION: Adding headers");
 		
 		for(Pair<String, String> myHeader: req.getRequestHeaders()){
 			Header header = new BasicHeader(myHeader.first, myHeader.second);
@@ -201,6 +203,8 @@ public class Connection {
 	}
 	
 	private ArrayList<Pair<String, String>> getHeaders(HttpResponse response) {
+		Log.i(TAG, "^ CONNECTION: getting headers");
+		
 		ArrayList<Pair<String, String>> headers = new ArrayList<Pair<String,String>>();
 		Header[] httpHeaders = response.getAllHeaders();
 
@@ -229,6 +233,8 @@ public class Connection {
 	}
 
 	private int getResponseCode(HttpResponse response){
+		Log.i(TAG, "^ CONNECTION: getting response code");
+		
 		int res = NetworkResult.INVALID_REPONSE_CODE;
 
 		StatusLine status = response.getStatusLine();
@@ -242,6 +248,8 @@ public class Connection {
 
 
 	private String getBody(HttpResponse response){
+		Log.i(TAG, "^ CONNECTION: getting body");
+		
 		HttpEntity entity = response.getEntity();
 		
 		InputStream responseStream;
